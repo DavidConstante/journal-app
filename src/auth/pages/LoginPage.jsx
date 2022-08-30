@@ -1,13 +1,41 @@
+import { useDispatch, useSelector } from 'react-redux'
 import { Link as RouterLink } from 'react-router-dom'
 import { Google } from '@mui/icons-material'
-import { Button, Grid, TextField, Typography, Link } from '@mui/material'
+import { Button, Grid, TextField, Typography, Link, Alert } from '@mui/material'
 import AuthLayout from '../layout/AuthLayout'
 
+import { useForm } from '../../hooks'
+import { startGoogleSigin, startLoginWithEmailAndPassword } from '../../store/auth'
+import { useMemo } from 'react'
+
 const LoginPage = () => {
+
+    const dispatch = useDispatch();
+    const { status, errorMessage } = useSelector(state => state.auth);
+
+    const { email, password, onInputChange, onResetForm } = useForm({
+        email: 'david@mail.com',
+        password: '1234567890',
+    });
+
+    const isAuthenticating = useMemo(() => status === 'checking', [status]);
+
+    const onSubmit = (e) => {
+        e.preventDefault();
+        dispatch(startLoginWithEmailAndPassword({ email, password }));
+    }
+
+    const onGoogleSignIn = () => {
+        dispatch(startGoogleSigin());
+        console.log('Google sign in');
+    }
+
+
+
     return (
         <AuthLayout title='Login'>
 
-            <form action="">
+            <form onSubmit={onSubmit}>
 
                 <Grid container>
                     <Grid item xs={12} sx={{ mt: 2 }}>
@@ -16,6 +44,9 @@ const LoginPage = () => {
                             type="email"
                             placeholder='correo@gmail.com'
                             fullWidth
+                            name='email'
+                            value={email}
+                            onChange={onInputChange}
                         />
                     </Grid>
                     <Grid item xs={12} sx={{ mt: 2 }}>
@@ -24,18 +55,40 @@ const LoginPage = () => {
                             type="password"
                             placeholder='contraseña'
                             fullWidth
+                            name='password'
+                            value={password}
+                            onChange={onInputChange}
                         />
                     </Grid>
 
                     {/* Buttons */}
-                    <Grid container spacing={2} sx={{ mb: 2, mt: 2 }}>
+                    <Grid container spacing={2} sx={{ mb: 2, mt: 1 }}>
+                        <Grid
+                            item
+                            xs={12}
+                            display={!!errorMessage ? '' : 'none'}
+                        >
+                            <Alert severity="error">{errorMessage}</Alert>
+                        </Grid>
+
+
                         <Grid item xs={12} sm={6} >
-                            <Button variant='contained' fullWidth>
+                            <Button
+                                disabled={isAuthenticating}
+                                type='submit'
+                                variant='contained'
+                                fullWidth
+                            >
                                 Login
                             </Button>
                         </Grid>
                         <Grid item xs={12} sm={6} >
-                            <Button variant='contained' fullWidth>
+                            <Button
+                                disabled={isAuthenticating}
+                                variant='contained'
+                                fullWidth
+                                onClick={onGoogleSignIn}
+                            >
                                 <Google />
                                 <Typography sx={{ ml: 1 }}>Google</Typography>
                             </Button>
