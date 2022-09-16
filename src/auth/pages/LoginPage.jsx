@@ -8,15 +8,17 @@ import { useForm } from '../../hooks'
 import { startGoogleSigin, startLoginWithEmailAndPassword } from '../../store/auth'
 import { useMemo } from 'react'
 
+const formData = {
+    email: 'david@mail.com',
+    password: '1234567890',
+}
+
 const LoginPage = () => {
 
     const dispatch = useDispatch();
     const { status, errorMessage } = useSelector(state => state.auth);
 
-    const { email, password, onInputChange, onResetForm } = useForm({
-        email: 'david@mail.com',
-        password: '1234567890',
-    });
+    const { email, password, onInputChange, onResetForm } = useForm(formData);
 
     const isAuthenticating = useMemo(() => status === 'checking', [status]);
 
