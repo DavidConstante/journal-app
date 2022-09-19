@@ -1,7 +1,8 @@
 import FormData from 'form-data'
 
 export const fileUpload = async (file) => {
-  if (!file) throw new Error('No existe archivo a subir')
+  // if (!file) throw new Error('No existe archivo a subir')
+  if (!file) return null
 
   const cloudURL = 'https://api.cloudinary.com/v1_1/omilec/upload?'
 
@@ -21,7 +22,7 @@ export const fileUpload = async (file) => {
     const cloudRta = await rta.json()
     return cloudRta.secure_url
   } catch (error) {
-    console.log(error)
-    throw new Error(error.message)
+    // throw new Error(error.message)
+    return null
   }
 }
