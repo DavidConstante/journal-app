@@ -1,33 +1,28 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 
-import AuthRoutes from '../auth/routes/AuthRoutes'
-import JournalRoutes from '../journal/routes/Journalroutes'
+import AuthRoutes from '@/auth/routes/AuthRoutes'
+import JournalRoutes from '@/journal/routes/JournalRoutes'
+import { CheckingAuth } from '@/ui'
+import { useCheckAuth } from '@/hooks'
 
-import { CheckingAuth } from '../ui'
-import { useCheckAuth } from '../hooks'
+export default function AppRouter() {
+  const { status } = useCheckAuth()
 
-const AppRouter = () => {
+  if (status === 'checking') return <CheckingAuth />
 
-    const { status } = useCheckAuth();
+  const isAuthenticated = status === 'authenticated'
 
-    if (status === 'checking') {
-        return <CheckingAuth />
-    }
-
-    return (
-        <Routes>
-
-            {
-                (status === 'authenticated')
-                    ? < Route path='/*' element={<JournalRoutes />} /> // Journal App
-                    : <Route path='/auth/*' element={<AuthRoutes />} /> // Login and Register
-            }
-
-            <Route path='/*' element={<Navigate to='/auth/login' />} />
-
-
-        </Routes>
-    )
+  return (
+    <Routes>
+      {isAuthenticated ? (
+        <Route path="/*" element={<JournalRoutes />} />
+      ) : (
+        <Route path="/auth/*" element={<AuthRoutes />} />
+      )}
+      <Route
+        path="/*"
+        element={<Navigate to={isAuthenticated ? '/' : '/auth/login'} replace />}
+      />
+    </Routes>
+  )
 }
-
-export default AppRouter

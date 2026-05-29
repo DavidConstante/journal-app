@@ -1,0 +1,5 @@
+# Firebase/protobuf postinstall build scripts aren't needed for the web SDK.
+# Recording the decision here stops pnpm from prompting on every install/run.
+allowBuilds:
+  '@firebase/util': false
+  protobufjs: false

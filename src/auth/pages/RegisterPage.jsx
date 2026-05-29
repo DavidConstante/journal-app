@@ -1,129 +1,138 @@
-import { Alert, Button, Grid, Link, TextField, Typography } from '@mui/material'
-import { useDispatch, useSelector } from 'react-redux'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
-import { useForm } from '../../hooks'
-import AuthLayout from '../layout/AuthLayout'
-import { startCreatingUserWithEmailAndPassword } from '../../store/auth'
+import { useDispatch, useSelector } from 'react-redux'
+import { AlertCircle, Loader2 } from 'lucide-react'
 
-const formData = {
-    displayName: '',
-    email: '',
-    password: '',
-}
+import AuthLayout from '@/auth/layout/AuthLayout'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { useForm } from '@/hooks'
+import { startCreatingUserWithEmailAndPassword } from '@/store/auth'
+
+const initialForm = { displayName: '', email: '', password: '' }
 
 const formValidations = {
-    email: [(value) => value.includes('@'), 'El correo debe tener un @'],
-    password: [(value) => value.length > 6, 'El password debe tener mas de 6 caracteres'],
-    displayName: [(value) => value.length > 1, 'El nombre es obligatorio']
+  displayName: [(value) => value.trim().length >= 2, 'Escribe tu nombre.'],
+  email: [(value) => /\S+@\S+\.\S+/.test(value), 'El correo no es válido.'],
+  password: [(value) => value.length >= 6, 'Mínimo 6 caracteres.'],
 }
 
-const RegisterPage = () => {
+export default function RegisterPage() {
+  const dispatch = useDispatch()
+  const { status, errorMessage } = useSelector((state) => state.auth)
+  const [submitted, setSubmitted] = useState(false)
 
-    const dispatch = useDispatch();
-    const { status, errorMessage } = useSelector(state => state.auth);
+  const {
+    displayName,
+    email,
+    password,
+    onInputChange,
+    isFormValid,
+    displayNameValid,
+    emailValid,
+    passwordValid,
+  } = useForm(initialForm, formValidations)
 
-    const [formSubmited, setformSubmited] = useState(false)
+  const isCheckingAuth = useMemo(() => status === 'checking', [status])
 
-    const {
-        formState, displayName, email, password, onInputChange, onResetForm,
-        isFormValid, displayNameValid, emailValid, passwordValid
-    } = useForm(formData, formValidations);
+  const onSubmit = (event) => {
+    event.preventDefault()
+    setSubmitted(true)
+    if (!isFormValid) return
+    dispatch(startCreatingUserWithEmailAndPassword({ displayName, email, password }))
+  }
 
-    const isCheckingAuthentication = useMemo(() => status === 'checking', [status]);
+  const fieldError = (validity) => (submitted && validity ? validity : null)
 
-    const onSubmit = (e) => {
-        e.preventDefault();
-        setformSubmited(true);
+  return (
+    <AuthLayout title="Crea tu diario" subtitle="Un espacio privado para escribir cada día.">
+      <form
+        onSubmit={onSubmit}
+        noValidate
+        className="mt-8 space-y-4 duration-500 animate-in fade-in-0 slide-in-from-bottom-1"
+      >
+        <div className="space-y-2">
+          <Label htmlFor="displayName">Nombre</Label>
+          <Input
+            id="displayName"
+            name="displayName"
+            placeholder="Tu nombre"
+            autoComplete="name"
+            value={displayName}
+            onChange={onInputChange}
+            aria-invalid={!!fieldError(displayNameValid)}
+            aria-describedby={fieldError(displayNameValid) ? 'displayName-error' : undefined}
+          />
+          {fieldError(displayNameValid) && (
+            <p id="displayName-error" role="alert" className="text-xs text-destructive">
+              {displayNameValid}
+            </p>
+          )}
+        </div>
 
-        if (!isFormValid) return;
-        dispatch(startCreatingUserWithEmailAndPassword(formState));
-        onResetForm();
-    }
+        <div className="space-y-2">
+          <Label htmlFor="email">Correo</Label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="tucorreo@ejemplo.com"
+            autoComplete="email"
+            value={email}
+            onChange={onInputChange}
+            aria-invalid={!!fieldError(emailValid)}
+            aria-describedby={fieldError(emailValid) ? 'email-error' : undefined}
+          />
+          {fieldError(emailValid) && (
+            <p id="email-error" role="alert" className="text-xs text-destructive">
+              {emailValid}
+            </p>
+          )}
+        </div>
 
+        <div className="space-y-2">
+          <Label htmlFor="password">Contraseña</Label>
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Mínimo 6 caracteres"
+            autoComplete="new-password"
+            value={password}
+            onChange={onInputChange}
+            aria-invalid={!!fieldError(passwordValid)}
+            aria-describedby={fieldError(passwordValid) ? 'password-error' : undefined}
+          />
+          {fieldError(passwordValid) && (
+            <p id="password-error" role="alert" className="text-xs text-destructive">
+              {passwordValid}
+            </p>
+          )}
+        </div>
 
+        {errorMessage && (
+          <div
+            role="alert"
+            className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+          >
+            <AlertCircle className="mt-0.5 size-4 shrink-0" />
+            <span>{errorMessage}</span>
+          </div>
+        )}
 
-    return (
-        <AuthLayout title="Register">
+        <Button type="submit" className="w-full" disabled={isCheckingAuth}>
+          {isCheckingAuth && <Loader2 className="size-4 animate-spin" />}
+          Crear cuenta
+        </Button>
 
-            <form onSubmit={onSubmit} className='animate__animated animate__fadeIn animate__faster'>
-
-                <Grid container>
-                    <Grid item xs={12} sx={{ mt: 2 }}>
-                        <TextField
-                            label='Nombre Completo'
-                            type="text"
-                            placeholder='David Constante'
-                            fullWidth
-                            name='displayName'
-                            value={displayName}
-                            onChange={onInputChange}
-                            error={!!displayNameValid && formSubmited}
-                            helperText='Este campo es obligatorio'
-                        />
-                    </Grid>
-                    <Grid item xs={12} sx={{ mt: 2 }}>
-                        <TextField
-                            label='correo'
-                            type="mail"
-                            placeholder='correo@example.com'
-                            fullWidth
-                            name='email'
-                            value={email}
-                            onChange={onInputChange}
-                            error={!!emailValid && formSubmited}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sx={{ mt: 2 }}>
-                        <TextField
-                            label='contraseña'
-                            type="password"
-                            placeholder='contraseña'
-                            fullWidth
-                            name='password'
-                            value={password}
-                            onChange={onInputChange}
-                            error={!!passwordValid && formSubmited}
-                        />
-                    </Grid>
-
-                    {/* Buttons */}
-                    <Grid container spacing={2} sx={{ mb: 2, mt: 2 }}>
-
-                        <Grid
-                            item
-                            xs={12}
-                            display={!!errorMessage ? '' : 'none'}
-                        >
-                            <Alert severity="error">{errorMessage}</Alert>
-                        </Grid>
-
-                        <Grid item xs={12} sm={12} >
-                            <Button
-                                disabled={isCheckingAuthentication}
-                                type='submit'
-                                variant='contained'
-                                fullWidth
-                            >
-                                Crear Cuenta
-                            </Button>
-                        </Grid>
-
-
-                    </Grid>
-
-                    <Grid container direction="row" justifyContent="end">
-                        <Typography sx={{ mr: 2 }}>¿Ya tienes cuenta?</Typography>
-                        <Link component={RouterLink} color='inherit' to="/auth/login">
-                            ingresar
-                        </Link>
-                    </Grid>
-
-                </Grid>
-
-            </form>
-        </AuthLayout>
-    )
+        <p className="pt-1 text-center text-sm text-muted-foreground">
+          ¿Ya tienes cuenta?{' '}
+          <RouterLink to="/auth/login" className="font-medium text-ribbon-strong hover:underline">
+            Inicia sesión
+          </RouterLink>
+        </p>
+      </form>
+    </AuthLayout>
+  )
 }
-
-export default RegisterPage

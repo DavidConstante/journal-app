@@ -1,29 +1,22 @@
-import { Toolbar } from '@mui/material';
-import { Box } from '@mui/system'
-import { NavBar, SideBar } from '../components';
+import { useState } from 'react'
 
+import { MobileTopbar } from '../components/MobileTopbar'
+import { Sidebar } from '../components/Sidebar'
 
-const drawerWidth = 280;
+export default function JournalLayout({ children }) {
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
-const JournalLayout = ({ children }) => {
-    return (
-        <Box sx={{ display: 'flex' }} className='animate__animated animate__fadeIn animate__faster'>
-
-            <NavBar drawerWidth={drawerWidth} />
-
-            <SideBar drawerWidth={drawerWidth} />
-
-            <Box
-                component='main'
-                sx={{ flexGrow: 1, p: 3 }}
-            >
-                <Toolbar />
-
-                {children}
-
-            </Box>
-        </Box>
-    )
+  return (
+    <div className="flex h-dvh overflow-hidden bg-background text-foreground">
+      <Sidebar
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        onNavigate={() => setSidebarOpen(false)}
+      />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <MobileTopbar onMenu={() => setSidebarOpen(true)} />
+        <main className="flex-1 overflow-y-auto">{children}</main>
+      </div>
+    </div>
+  )
 }
-
-export default JournalLayout

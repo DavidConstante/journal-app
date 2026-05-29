@@ -1,21 +1,20 @@
-import { getAuth } from 'firebase/auth'
 import { initializeApp } from 'firebase/app'
+import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore/lite'
 
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+const env = import.meta.env
 
-// Your web app's Firebase configuration
+// Public Firebase web config — these are client identifiers, not secrets.
+// Access is enforced by Firestore Security Rules. Override with .env (VITE_FIREBASE_*).
 const firebaseConfig = {
-  apiKey: 'AIzaSyDQgV7BBDbQLIfWgWoWorNzgLCpz6jr080',
-  authDomain: 'react-cursos-9ad79.firebaseapp.com',
-  projectId: 'react-cursos-9ad79',
-  storageBucket: 'react-cursos-9ad79.appspot.com',
-  messagingSenderId: '729081740474',
-  appId: '1:729081740474:web:d791bf8195c7f1ea1dd683'
+  apiKey: env.VITE_FIREBASE_API_KEY || 'AIzaSyDQgV7BBDbQLIfWgWoWorNzgLCpz6jr080',
+  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN || 'react-cursos-9ad79.firebaseapp.com',
+  projectId: env.VITE_FIREBASE_PROJECT_ID || 'react-cursos-9ad79',
+  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || 'react-cursos-9ad79.appspot.com',
+  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || '729081740474',
+  appId: env.VITE_FIREBASE_APP_ID || '1:729081740474:web:d791bf8195c7f1ea1dd683',
 }
 
-// Initialize Firebase
 export const FirebaseApp = initializeApp(firebaseConfig)
 export const FirebaseAuth = getAuth(FirebaseApp)
-export const FireBaseDB = getFirestore(FirebaseApp)
+export const FirebaseDB = getFirestore(FirebaseApp)

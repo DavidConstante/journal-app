@@ -1,28 +1,19 @@
-import FormData from 'form-data'
+const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'omilec'
+const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'react-journal'
 
+/** Upload a single file to Cloudinary (unsigned). Resolves to the secure URL. */
 export const fileUpload = async (file) => {
-  // if (!file) throw new Error('No existe archivo a subir')
   if (!file) return null
 
-  const cloudURL = 'https://api.cloudinary.com/v1_1/omilec/upload?'
+  const cloudUrl = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`
 
-  // Generate medadata of promise
   const formData = new FormData()
-  formData.append('upload_preset', 'react-journal')
+  formData.append('upload_preset', UPLOAD_PRESET)
   formData.append('file', file)
 
-  try {
-    const rta = await fetch(cloudURL, {
-      method: 'POST',
-      body: formData
-    })
+  const response = await fetch(cloudUrl, { method: 'POST', body: formData })
+  if (!response.ok) throw new Error('No se pudo subir la imagen')
 
-    if (!rta.ok) throw new Error('No se pudo subir la imagen')
-
-    const cloudRta = await rta.json()
-    return cloudRta.secure_url
-  } catch (error) {
-    // throw new Error(error.message)
-    return null
-  }
+  const { secure_url: secureUrl } = await response.json()
+  return secureUrl
 }

@@ -1,55 +1,44 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
+/**
+ * Lightweight controlled-form hook with optional field validations.
+ * Note: this hook initialises once from `initialForm`. To reset it when the
+ * source data changes (e.g. switching journal entries), remount via a `key`.
+ */
 export const useForm = (initialForm = {}, formValidations = {}) => {
   const [formState, setFormState] = useState(initialForm)
 
-  const [formValidation, setFormValidation] = useState({})
-
-  useEffect(() => {
-    createValidators()
-  }, [formState])
-
-  useEffect(() => {
-    setFormState(initialForm)
-  }, [initialForm])
-
   const onInputChange = ({ target }) => {
     const { name, value } = target
-    setFormState({
-      ...formState,
-      [name]: value
-    })
+    setFormState((prev) => ({ ...prev, [name]: value }))
   }
 
-  const onResetForm = () => {
-    setFormState(initialForm)
-  }
+  const setField = (name, value) => setFormState((prev) => ({ ...prev, [name]: value }))
 
-  const isFormValid = useMemo(() => {
-    for (const formValue of Object.keys(formValidation)) {
-      if (formValidation[formValue] !== null) return false
+  const onResetForm = () => setFormState(initialForm)
+
+  const formValidation = useMemo(() => {
+    const checks = {}
+    for (const field of Object.keys(formValidations)) {
+      const [validator, message] = formValidations[field]
+      checks[`${field}Valid`] = validator(formState[field]) ? null : message
     }
+    return checks
+  }, [formState, formValidations])
 
-    return true
-  }, [formValidation])
-
-  const createValidators = () => {
-    const formCheckedValues = {}
-
-    for (const formField of Object.keys(formValidations)) {
-      const [fn, errorMessage] = formValidations[formField]
-
-      formCheckedValues[`${formField}Valid`] = fn(formState[formField]) ? null : errorMessage
-      setFormValidation(formCheckedValues)
-    }
-  }
+  const isFormValid = useMemo(
+    () => Object.values(formValidation).every((value) => value === null),
+    [formValidation]
+  )
 
   return {
     ...formState,
     formState,
+    setFormState,
+    setField,
     onInputChange,
     onResetForm,
     ...formValidation,
-    isFormValid
+    isFormValid,
   }
 }

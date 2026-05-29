@@ -1,23 +1,15 @@
-import { CircularProgress, Grid } from "@mui/material"
+import { BookMarked, Loader2 } from 'lucide-react'
 
-export const CheckingAuth = () => {
-    return (
-        <Grid container
-            spacing={0}
-            direction='column'
-            alignItems='center'
-            justifyContent='center'
-            sx={{ minHeight: '100vh', backgroundColor: 'primary.main', padding: '4' }}
-        >
-
-            <Grid container
-                direction='row'
-                justifyContent='center'
-            >
-                <CircularProgress color="warning" />
-            </Grid>
-
-
-        </Grid>
-    )
+export function CheckingAuth() {
+  return (
+    <div className="flex min-h-dvh flex-col items-center justify-center gap-5 bg-background text-foreground">
+      <div className="flex size-12 items-center justify-center rounded-2xl bg-ribbon/12 text-ribbon shadow-soft">
+        <BookMarked className="size-6" />
+      </div>
+      <div className="flex items-center gap-2 text-muted-foreground">
+        <Loader2 className="size-4 animate-spin" />
+        <span className="font-display text-sm italic">Abriendo tu diario…</span>
+      </div>
+    </div>
+  )
 }

@@ -1,3 +1,274 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+/* Dark mode driven by a `.dark` class on <html> (set pre-paint in index.html). */
+@custom-variant dark (&:is(.dark *));
+
+/*
+  Diario cálido — papel & tinta
+  A journaling app should feel like a real notebook: warm cream paper, sepia ink,
+  a burgundy silk ribbon marking your page. Color comes FROM that world, not applied to it.
+*/
+@theme inline {
+  /* Type — an expressive serif for the journal's voice, a quiet sans for the tool's chrome */
+  --font-sans: 'Figtree', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+  --font-body: 'Newsreader', 'Iowan Old Style', Georgia, serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Menlo', monospace;
+
+  /* Radius — soft like a worn page corner, not bubbly */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 10px);
+
+  /* Semantic colors mapped to runtime variables (light/dark below) */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Brand — the ribbon bookmark (signature accent, used sparingly) */
+  --color-ribbon: var(--ribbon);
+  --color-ribbon-foreground: var(--ribbon-foreground);
+  --color-ribbon-muted: var(--ribbon-muted);
+  /* Ribbon tuned for text-on-background (kept >= AA contrast in both themes) */
+  --color-ribbon-strong: var(--ribbon-strong);
+
+  /* The auth "leather cover" — intentionally constant across light/night */
+  --color-cover: var(--cover);
+  --color-cover-foreground: var(--cover-foreground);
+
+  /* The faint ruled margin line of a notebook page */
+  --color-rule: var(--rule);
+
+  /* Sidebar shares the canvas hue; separation comes from a border, not a different color */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Warm, low shadows — paper lifting off a desk, never gray drop-shadows */
+  --shadow-soft: 0 1px 2px -1px oklch(0.28 0.04 60 / 0.1), 0 2px 6px -2px oklch(0.28 0.04 60 / 0.08);
+  --shadow-page: 0 1px 2px oklch(0.28 0.04 60 / 0.06), 0 12px 32px -14px oklch(0.28 0.04 60 / 0.2);
+}
+
+/* ---- Daytime: cream paper on a warm desk ---- */
+:root {
+  --radius: 0.75rem;
+
+  --background: oklch(0.93 0.018 84); /* the desk */
+  --foreground: oklch(0.26 0.016 58); /* sepia ink */
+
+  --card: oklch(0.972 0.013 86); /* a fresh page */
+  --card-foreground: oklch(0.26 0.016 58);
+
+  --popover: oklch(0.982 0.011 86);
+  --popover-foreground: oklch(0.26 0.016 58);
+
+  --primary: oklch(0.32 0.022 56); /* ink-stamped button */
+  --primary-foreground: oklch(0.97 0.013 86);
+
+  --secondary: oklch(0.9 0.022 82);
+  --secondary-foreground: oklch(0.3 0.02 56);
+
+  --muted: oklch(0.905 0.02 83);
+  --muted-foreground: oklch(0.5 0.018 67); /* pencil graphite */
+
+  --accent: oklch(0.895 0.027 78);
+  --accent-foreground: oklch(0.3 0.02 56);
+
+  --destructive: oklch(0.55 0.16 38); /* terracotta — distinct from the burgundy brand */
+  --destructive-foreground: oklch(0.97 0.013 86);
+
+  --border: oklch(0.86 0.02 78);
+  --input: oklch(0.845 0.022 76);
+  --ring: oklch(0.55 0.12 28);
+
+  --ribbon: oklch(0.46 0.13 25); /* deep burgundy silk */
+  --ribbon-foreground: oklch(0.97 0.013 86);
+  --ribbon-muted: oklch(0.46 0.13 25 / 0.12);
+  --ribbon-strong: oklch(0.46 0.13 25);
+
+  --cover: oklch(0.255 0.016 55); /* leather book cover — constant across themes */
+  --cover-foreground: oklch(0.94 0.014 85);
+
+  --rule: oklch(0.6 0.12 25 / 0.22);
+
+  --sidebar: oklch(0.93 0.018 84);
+  --sidebar-foreground: oklch(0.26 0.016 58);
+  --sidebar-primary: oklch(0.46 0.13 25);
+  --sidebar-primary-foreground: oklch(0.97 0.013 86);
+  --sidebar-accent: oklch(0.895 0.027 78);
+  --sidebar-accent-foreground: oklch(0.3 0.02 56);
+  --sidebar-border: oklch(0.86 0.02 78);
+  --sidebar-ring: oklch(0.55 0.12 28);
+}
+
+/* ---- Night: writing by lamplight (warm espresso, never cold gray) ---- */
+.dark {
+  --background: oklch(0.205 0.008 64);
+  --foreground: oklch(0.915 0.014 86); /* warm parchment */
+
+  --card: oklch(0.246 0.009 62);
+  --card-foreground: oklch(0.915 0.014 86);
+
+  --popover: oklch(0.262 0.009 62);
+  --popover-foreground: oklch(0.915 0.014 86);
+
+  --primary: oklch(0.9 0.013 86);
+  --primary-foreground: oklch(0.245 0.012 62);
+
+  --secondary: oklch(0.278 0.01 60);
+  --secondary-foreground: oklch(0.915 0.014 86);
+
+  --muted: oklch(0.278 0.009 60);
+  --muted-foreground: oklch(0.71 0.014 78);
+
+  --accent: oklch(0.305 0.012 58);
+  --accent-foreground: oklch(0.915 0.014 86);
+
+  --destructive: oklch(0.62 0.17 35);
+  --destructive-foreground: oklch(0.97 0.012 86);
+
+  --border: oklch(0.92 0.02 86 / 0.12);
+  --input: oklch(0.92 0.02 86 / 0.17);
+  --ring: oklch(0.6 0.13 30);
+
+  --ribbon: oklch(0.57 0.15 28);
+  --ribbon-foreground: oklch(0.97 0.012 86);
+  --ribbon-muted: oklch(0.57 0.15 28 / 0.18);
+  --ribbon-strong: oklch(0.72 0.15 33); /* lighter for legible accent text on dark */
+
+  --rule: oklch(0.62 0.13 30 / 0.22);
+
+  --sidebar: oklch(0.205 0.008 64);
+  --sidebar-foreground: oklch(0.915 0.014 86);
+  --sidebar-primary: oklch(0.57 0.15 28);
+  --sidebar-primary-foreground: oklch(0.97 0.012 86);
+  --sidebar-accent: oklch(0.305 0.012 58);
+  --sidebar-accent-foreground: oklch(0.915 0.014 86);
+  --sidebar-border: oklch(0.92 0.02 86 / 0.12);
+  --sidebar-ring: oklch(0.6 0.13 30);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: 'ss01';
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--ribbon-muted);
+    color: var(--foreground);
+  }
+
+  /* Thin, warm scrollbars */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--foreground) 22%, transparent) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--foreground) 20%, transparent);
+    border: 3px solid transparent;
+    border-radius: 9999px;
+    background-clip: content-box;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in oklab, var(--foreground) 32%, transparent);
+    background-clip: content-box;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* A barely-there paper grain laid over a surface */
+  .paper-texture {
+    position: relative;
+    isolation: isolate;
+  }
+  .paper-texture::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.04;
+    mix-blend-mode: multiply;
+  }
+  .dark .paper-texture::before {
+    mix-blend-mode: soft-light;
+    opacity: 0.06;
+  }
+
+  /* The silk ribbon marking the active entry */
+  .ribbon-mark {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 6px;
+    height: 2.25rem;
+    background: var(--ribbon);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 76%, 0 100%);
+  }
+
+  /* The faint thread connecting entries within a day */
+  .timeline-thread {
+    position: relative;
+  }
+  .timeline-thread::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    top: 0.75rem;
+    bottom: 0.25rem;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--border) 12%, var(--border) 88%, transparent);
+  }
+}

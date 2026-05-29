@@ -1,5 +1,2 @@
-
-import LoginPage from './LoginPage'
-import RegisterPage from './RegisterPage'
-
-export { LoginPage, RegisterPage }
+export { default as LoginPage } from './LoginPage'
+export { default as RegisterPage } from './RegisterPage'

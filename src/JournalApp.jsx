@@ -1,15 +1,15 @@
-import React from 'react'
-import AppRouter from './router/AppRouter'
-import { AppTheme } from './theme/AppTheme'
+import { ThemeProvider } from '@/components/theme/theme-provider'
+import { Toaster } from '@/components/ui/sonner'
+import { TooltipProvider } from '@/components/ui/tooltip'
+import AppRouter from '@/router/AppRouter'
 
-const JournalApp = () => {
+export default function JournalApp() {
   return (
-    <>
-      <AppTheme >
+    <ThemeProvider defaultTheme="system">
+      <TooltipProvider>
         <AppRouter />
-      </AppTheme>
-    </>
+      </TooltipProvider>
+      <Toaster />
+    </ThemeProvider>
   )
 }
-
-export default JournalApp
